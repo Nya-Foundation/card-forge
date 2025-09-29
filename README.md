@@ -58,6 +58,9 @@ card-forge info character.png
 
 # Generate default configuration file
 card-forge init-config
+
+# Show version information
+card-forge --version
 ```
 
 ## 📋 Commands

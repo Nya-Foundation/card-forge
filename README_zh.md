@@ -56,6 +56,9 @@ card-forge info character.png
 
 # 生成默认配置文件
 card-forge init-config
+
+# 显示版本信息
+card-forge --version
 ```
 
 ## 📋 命令
