@@ -1,0 +1,86 @@
+# .github/workflows/publish.yml
+# 
+# Standard Publish Workflow for Nya Foundation
+# 
+# This workflow handles the full CI/CD pipeline for Foundation:
+# 1. Runs tests and checks
+# 2. Uses semantic-release to automatically version the project based on commit messages
+# 3. Publishes the package to PyPI
+# 4. Builds and pushes Docker images to both Docker Hub and GitHub Container Registry
+# 5. Creates GitHub releases with changelog
+#
+# Required Secrets:
+# - CI_APP_ID: GitHub App ID for token generation
+# - CI_APP_PRIVATE_KEY: GitHub App private key for token generation  
+# - DOCKERHUB_USERNAME: Username for Docker Hub
+# - DOCKERHUB_TOKEN: Access token for Docker Hub (not password)
+#
+# Optional Variables (set in repository variables):
+# - GCR_IMAGE_NAME: Image name for GitHub Container Registry (example: nya-foundation/nya-proxy)
+# - DOCKERHUB_IMAGE_NAME: Image name for Docker Hub (example: k3scat/nya-proxy)
+#
+# Permissions needed:
+# - contents: write (for creating GitHub releases)
+# - id-token: write (for PyPI trusted publishing)
+# - packages: write (for publishing to GitHub Container Registry)
+
+name: CI - Publish and Release
+
+on:
+  push:
+    branches:
+      - main # Trigger release only on pushes to main
+    paths:
+    - '**/*.py' # Trigger on changes to Python files
+
+# Prevent multiple concurrent releases
+concurrency:
+  group: ${{ github.workflow }}-release
+  cancel-in-progress: false # Do not cancel releases once started
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: Publish and Release
+    permissions:
+      contents: write # Needed to create GitHub releases and tags
+      id-token: write # Needed for PyPI trusted publishing (OIDC) - Recommended!
+      packages: write # Needed for publishing Docker images
+    steps:
+      # Generate Token for the GitHub App
+    - name: Generate GitHub App Token
+      id: generate-token
+      # Uses App ID and Private Key secrets to generate a short-lived installation token
+      uses: actions/create-github-app-token@v2
+      with:
+        app-id: ${{ secrets.CI_APP_ID }}
+        private-key: ${{ secrets.CI_APP_PRIVATE_KEY }}
+
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ steps.generate-token.outputs.token }}
+        fetch-depth: 0
+        persist-credentials: true
+
+    # Setup Python - semantic-release might need it or specific tools
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    # Configured with PyPI Trusted Publishing (OIDC)
+    # https://docs.pypi.org/trusted-publishers/
+    - name: Python Semantic Release
+      id: semantic-release
+      uses: python-semantic-release/python-semantic-release@v9
+      with:
+        github_token: ${{ steps.generate-token.outputs.token }}
+
+    - name: Publish package to PyPI
+      if: steps.semantic-release.outputs.released == 'true'
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        verbose: true
+        print-hash: true

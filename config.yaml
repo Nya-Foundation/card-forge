@@ -1,0 +1,125 @@
+# Card Forge Configuration File
+# This file controls how character cards are repositorized into file structures
+
+repositorize:
+  enabled: true
+  type: nested
+  fields:
+    # Character description - main character description text
+    description:
+      enabled: true
+      type: string
+      filename: description.md
+
+    # Character personality traits and characteristics
+    personality:
+      enabled: true
+      type: string
+      filename: personality.md
+
+    # Scenario description - the setting/context for the character
+    scenario:
+      enabled: true
+      type: string
+      filename: scenario.md
+
+    # System prompt - instructions for the AI system
+    system_prompt:
+      enabled: true
+      type: string
+      filename: system_prompt.md
+
+    # Post-history instructions - instructions that come after chat history
+    post_history_instructions:
+      enabled: true
+      type: string
+      filename: post_history_instructions.md
+
+    # First message - the character's initial greeting
+    first_mes:
+      enabled: true
+      type: string
+      filename: first_message.md
+
+    # Example messages - sample dialogue showing character speech patterns
+    mes_example:
+      enabled: true
+      type: string
+      filename: example_messages.md
+
+    # Creator notes - notes from the character creator
+    creator_notes:
+      enabled: true
+      type: string
+      filename: creator_notes.md
+
+    # Alternative greeting messages - stored as numbered files in a directory
+    alternate_greetings:
+      enabled: true
+      type: array
+      file_pattern: "{index}.txt"
+      value_type: string
+
+    # Group-only greetings - greetings used only in group chats
+    group_only_greetings:
+      enabled: true
+      type: array
+      file_pattern: "{index}.txt"
+      value_type: string
+
+    # Character tags - disabled by default, kept in metadata
+    tags:
+      enabled: false
+      type: array
+      value_type: string
+
+    # Source URLs/IDs - disabled by default, kept in metadata
+    source:
+      enabled: false
+      type: array
+      value_type: string
+
+    # Character assets (icons, backgrounds, etc.)
+    assets:
+      enabled: true
+      type: array
+      file_pattern: "{name}_{type}.yaml"
+      value_type: dict
+
+    # Multilingual creator notes - notes in different languages
+    creator_notes_multilingual:
+      enabled: true
+      type: dict
+      file_pattern: "{key}.md"
+      value_type: string
+
+    # Extensions - complex nested structure for various extensions
+    extensions:
+      enabled: true
+      type: nested
+      fields:
+        # TavernHelper scripts (Optional)
+        TavernHelper_scripts:
+          enabled: true
+          type: array
+          file_pattern: "{value.name}.yaml"
+          value_type: dict
+
+        # Regular expression scripts
+        regex_scripts:
+          enabled: true
+          type: array
+          file_pattern: "{scriptName}.yaml"
+          value_type: dict
+
+    # Character book (lorebook) - world information entries
+    character_book:
+      enabled: true
+      type: nested
+      fields:
+        # Lorebook entries - individual world information entries
+        entries:
+          enabled: true
+          type: array
+          file_pattern: "{id}-{comment}.yaml"
+          value_type: dict
