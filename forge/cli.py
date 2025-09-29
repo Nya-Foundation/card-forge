@@ -3,18 +3,22 @@
 Card Forge CLI - Modern tool for AI character card management
 """
 
-import argparse
-import json
 import os
 import sys
+import json
+import argparse
 from pathlib import Path
 
 import yaml
 
+from forge._version import __version__
 from forge.constant import DEFAULT_CONFIG
 from forge.helper import embed_card_data, extract_card_data, rebuild_card, repositorize
 
-ASCII_ART = """
+
+def get_ascii_art():
+    """Get ASCII art with version information."""
+    return f"""
 ╔═══════════════════════════════════════════════════════════════════════════════╗
 ║                                                                               ║
 ║   ██████╗ █████╗ ██████╗ ██████╗     ███████╗ ██████╗ ██████╗  ██████╗ ███████╗║
@@ -25,6 +29,7 @@ ASCII_ART = """
 ║   ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝     ╚═╝      ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝║
 ║                                                                               ║
 ║                    🔨 AI Character Card Management Tool 🔨                    ║
+║                                    v{__version__:<10}                                 ║
 ║                                                                               ║
 ╚═══════════════════════════════════════════════════════════════════════════════╝
 """
@@ -32,7 +37,7 @@ ASCII_ART = """
 
 def print_header():
     """Print the ASCII art header."""
-    print(ASCII_ART)
+    print(get_ascii_art())
 
 
 def print_success(message: str):
@@ -365,6 +370,11 @@ Examples:
         """,
     )
 
+    # Add version argument
+    parser.add_argument(
+        "--version", action="version", version=f"Card Forge {__version__}"
+    )
+
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     # Extract command
@@ -443,7 +453,9 @@ def main():
 
     if not args.command:
         print_header()
-        print_info("Welcome to Card Forge! Use --help to see available commands.")
+        print_info(
+            f"Welcome to Card Forge v{__version__}! Use --help to see available commands."
+        )
         parser.print_help()
         return 0
 
