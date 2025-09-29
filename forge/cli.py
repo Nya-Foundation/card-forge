@@ -3,10 +3,10 @@
 Card Forge CLI - Modern tool for AI character card management
 """
 
+import argparse
+import json
 import os
 import sys
-import json
-import argparse
 from pathlib import Path
 
 import yaml
