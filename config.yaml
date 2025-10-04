@@ -102,14 +102,14 @@ repositorize:
         TavernHelper_scripts:
           enabled: true
           type: array
-          file_pattern: "{idx}: {value.name}.yaml"
+          file_pattern: "{idx}_{value.name}.yaml"
           value_type: dict
 
         # Regular expression scripts
         regex_scripts:
           enabled: true
           type: array
-          file_pattern: "{idx}: {scriptName}.yaml"
+          file_pattern: "{idx}_{scriptName}.yaml"
           value_type: dict
 
     # Character book (lorebook) - world information entries
@@ -121,5 +121,5 @@ repositorize:
         entries:
           enabled: true
           type: array
-          file_pattern: "{id}: {comment}.yaml"
+          file_pattern: "{id}_{comment}.yaml"
           value_type: dict

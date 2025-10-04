@@ -73,13 +73,13 @@ DEFAULT_CONFIG = {
                     "TavernHelper_scripts": {
                         "enabled": True,
                         "type": "array",
-                        "file_pattern": "{idx}: {value.name}.yaml",
+                        "file_pattern": "{idx}_{value.name}.yaml",
                         "value_type": "dict",
                     },
                     "regex_scripts": {
                         "enabled": True,
                         "type": "array",
-                        "file_pattern": "{idx}: {scriptName}.yaml",
+                        "file_pattern": "{idx}_{scriptName}.yaml",
                         "value_type": "dict",
                     },
                 },
@@ -91,7 +91,7 @@ DEFAULT_CONFIG = {
                     "entries": {
                         "enabled": True,
                         "type": "array",
-                        "file_pattern": "{id}: {comment}.yaml",
+                        "file_pattern": "{id}_{comment}.yaml",
                         "value_type": "dict",
                     },
                 },

@@ -208,9 +208,6 @@ def _extract_filename_from_pattern(pattern: str, item: Any) -> str:
     Returns:
         Generated filename
     """
-    if not isinstance(item, dict):
-        return None
-
     try:
         # Use a custom formatter that handles dot notation
         return _format_with_dot_notation(pattern, item)
@@ -333,7 +330,6 @@ def dump_array_field(
     # Directory name is always the field name
     full_path = os.path.join(path, field_name)
     value_type = config.get("value_type", "string")
-
     zfill_length = min(len(items), 3)
 
     # Handle different array patterns
@@ -348,7 +344,10 @@ def dump_array_field(
                 filename = pattern.replace("{idx}", str(idx + 1).zfill(zfill_length))
 
             # Handle complex patterns, dot notation from item fields
-            filename = _extract_filename_from_pattern(filename, item) or f"{idx + 1}.md"
+            if isinstance(item, dict):
+                filename = (
+                    _extract_filename_from_pattern(filename, item) or f"{idx + 1}.md"
+                )
 
             file_path = os.path.join(full_path, filename)
             write_value(item, file_path, value_type)
