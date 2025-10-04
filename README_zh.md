@@ -270,6 +270,169 @@ rebuilt_card = rebuild_card(repo_path)
 
 该工具使用 `config.yaml` 进行自定义。默认配置适用于大多数使用场景，但您可以根据需要自定义字段处理、文件模式和仓库结构。
 
+### 🛠️ 自定义仓库化行为
+
+Card Forge 使用灵活的配置系统，让您可以精确控制角色数据如何组织成文件和目录。以下是自定义方法：
+
+#### 字段类型和选项
+
+角色卡中的每个字段都可以配置不同的类型和行为：
+
+```yaml
+repositorize:
+  fields:
+    field_name:
+      enabled: true/false          # 是否处理此字段
+      type: string|array|dict|nested  # 如何处理数据
+      filename: "custom.md"        # 用于字符串类型
+      file_pattern: "{template}"   # 用于数组和字典
+      value_type: string|dict      # 数组/字典中值的类型
+```
+
+#### 模板变量
+
+Card Forge 支持强大的模板变量用于动态文件命名：
+
+**基础变量：**
+- `{idx}` - 数组索引（自动补零）
+- `{key}` - 字典键名
+
+**点标记法（用于复杂数据）：**
+- `{value.name}` - 访问嵌套属性
+- `{value.id}_{value.title}` - 组合多个属性
+
+#### 配置示例
+
+**1. 自定义数组模式**
+```yaml
+# 默认：alternate_greetings/001.md, 002.md, 003.md
+alternate_greetings:
+  enabled: true
+  type: array
+  file_pattern: "greeting_{idx}.md"
+  value_type: string
+
+# 结果：alternate_greetings/greeting_001.md, greeting_002.md
+```
+
+**2. 复杂对象数组**
+```yaml
+# 用于对象数组，如素材或脚本
+assets:
+  enabled: true
+  type: array
+  file_pattern: "{name}_{type}.yaml"  # 使用对象属性
+  value_type: dict
+
+# 结果：assets/portrait_icon.yaml, background_image.yaml
+```
+
+**3. 多语言内容**
+```yaml
+# 以语言代码为键的字典
+creator_notes_multilingual:
+  enabled: true
+  type: dict
+  file_pattern: "notes_{key}.md"  # key = 语言代码
+  value_type: string
+
+# 结果：creator_notes_multilingual/notes_en.md, notes_es.md
+```
+
+**4. 嵌套字段配置**
+```yaml
+extensions:
+  enabled: true
+  type: nested
+  fields:
+    regex_scripts:
+      enabled: true
+      type: array
+      file_pattern: "{idx}_{scriptName}.yaml"  # 使用脚本的名称属性
+      value_type: dict
+```
+
+**5. 禁用字段**
+```yaml
+# 保持某些字段在元数据中而不是单独的文件
+tags:
+  enabled: false  # 将保留在 _metadata.yaml 中
+  type: array
+  value_type: string
+
+source:
+  enabled: false  # 在元数据中保留URL以便于管理
+  type: array
+  value_type: string
+```
+
+#### 自定义配置工作流程
+
+1. **生成默认配置：**
+   ```bash
+   card-forge init-config -o my_config.yaml
+   ```
+
+2. **自定义字段处理：**
+   ```yaml
+   # 示例：更改问候语的组织方式
+   alternate_greetings:
+     enabled: true
+     type: array
+     file_pattern: "alt_greeting_{idx}.txt"
+     value_type: string
+   ```
+
+3. **使用自定义配置：**
+   ```bash
+   card-forge repo character.png -c my_config.yaml
+   card-forge build character/ -c my_config.yaml
+   ```
+
+#### 高级示例
+
+**按功能组织脚本：**
+```yaml
+extensions:
+  enabled: true
+  type: nested
+  fields:
+    regex_scripts:
+      enabled: true
+      type: array
+      file_pattern: "{idx}_{scriptName}_{id}.yaml"
+      value_type: dict
+```
+
+**使用有意义名称的设定集条目：**
+```yaml
+character_book:
+  enabled: true
+  type: nested
+  fields:
+    entries:
+      enabled: true
+      type: array
+      file_pattern: "{id}_{comment}.yaml"  # 使用条目ID和注释
+      value_type: dict
+```
+
+**自定义字符串字段组织：**
+```yaml
+# 将所有文本内容组织在'content'子目录中
+description:
+  enabled: true
+  type: string
+  filename: "content/character_description.md"
+
+personality:
+  enabled: true
+  type: string
+  filename: "content/personality_traits.md"
+```
+
+配置系统设计得既直观又强大——您可以保持默认设置用于快速工作流程，或为有特定组织需求的复杂项目自定义所有内容。
+
 ## 🤝 贡献
 
 1. Fork 仓库
