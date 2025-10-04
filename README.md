@@ -272,6 +272,169 @@ rebuilt_card = rebuild_card(repo_path)
 
 The tool uses `config.yaml` for customization. The default configuration works great for most use cases, but you can customize field handling, file patterns, and repository structure as needed.
 
+### 🛠️ Customizing Repositorization Behavior
+
+Card Forge uses a flexible configuration system that lets you control exactly how character data gets organized into files and directories. Here's how to customize it:
+
+#### Field Types and Options
+
+Each field in your character card can be configured with different types and behaviors:
+
+```yaml
+repositorize:
+  fields:
+    field_name:
+      enabled: true/false          # Whether to process this field
+      type: string|array|dict|nested  # How to handle the data
+      filename: "custom.md"        # For string types
+      file_pattern: "{template}"   # For arrays and dicts
+      value_type: string|dict      # Type of values in arrays/dicts
+```
+
+#### Template Variables
+
+Card Forge supports powerful template variables for dynamic file naming:
+
+**Basic Variables:**
+- `{idx}` - Array index (auto-padded with zeros)
+- `{key}` - Dictionary key name
+
+**Dot Notation (for complex data):**
+- `{value.name}` - Access nested properties
+- `{value.id}_{value.title}` - Combine multiple properties
+
+#### Configuration Examples
+
+**1. Custom Array Patterns**
+```yaml
+# Default: alternate_greetings/001.md, 002.md, 003.md
+alternate_greetings:
+  enabled: true
+  type: array
+  file_pattern: "greeting_{idx}.md"
+  value_type: string
+
+# Result: alternate_greetings/greeting_001.md, greeting_002.md
+```
+
+**2. Complex Object Arrays**
+```yaml
+# For arrays of objects like assets or scripts
+assets:
+  enabled: true
+  type: array
+  file_pattern: "{name}_{type}.yaml"  # Uses object properties
+  value_type: dict
+
+# Result: assets/portrait_icon.yaml, background_image.yaml
+```
+
+**3. Multilingual Content**
+```yaml
+# Dictionary with language codes as keys
+creator_notes_multilingual:
+  enabled: true
+  type: dict
+  file_pattern: "notes_{key}.md"  # key = language code
+  value_type: string
+
+# Result: creator_notes_multilingual/notes_en.md, notes_es.md
+```
+
+**4. Nested Field Configuration**
+```yaml
+extensions:
+  enabled: true
+  type: nested
+  fields:
+    regex_scripts:
+      enabled: true
+      type: array
+      file_pattern: "{idx}_{scriptName}.yaml"  # Uses script's name property
+      value_type: dict
+```
+
+**5. Disabling Fields**
+```yaml
+# Keep some fields in metadata instead of separate files
+tags:
+  enabled: false  # Will remain in _metadata.yaml
+  type: array
+  value_type: string
+
+source:
+  enabled: false  # Keep URLs in metadata for easier management
+  type: array
+  value_type: string
+```
+
+#### Custom Configuration Workflow
+
+1. **Generate default config:**
+   ```bash
+   card-forge init-config -o my_config.yaml
+   ```
+
+2. **Customize field handling:**
+   ```yaml
+   # Example: Change how greetings are organized
+   alternate_greetings:
+     enabled: true
+     type: array
+     file_pattern: "alt_greeting_{idx}.txt"
+     value_type: string
+   ```
+
+3. **Use custom config:**
+   ```bash
+   card-forge repo character.png -c my_config.yaml
+   card-forge build character/ -c my_config.yaml
+   ```
+
+#### Advanced Examples
+
+**Organize scripts by functionality:**
+```yaml
+extensions:
+  enabled: true
+  type: nested
+  fields:
+    regex_scripts:
+      enabled: true
+      type: array
+      file_pattern: "{idx}_{scriptName}_{id}.yaml"
+      value_type: dict
+```
+
+**Lorebook entries with meaningful names:**
+```yaml
+character_book:
+  enabled: true
+  type: nested
+  fields:
+    entries:
+      enabled: true
+      type: array
+      file_pattern: "{id}_{comment}.yaml"  # Uses entry ID and comment
+      value_type: dict
+```
+
+**Custom string field organization:**
+```yaml
+# Group all text content in a 'content' subdirectory
+description:
+  enabled: true
+  type: string
+  filename: "content/character_description.md"
+
+personality:
+  enabled: true
+  type: string
+  filename: "content/personality_traits.md"
+```
+
+The configuration system is designed to be intuitive yet powerful - you can keep the defaults for quick workflows, or customize everything for complex projects with specific organization needs.
+
 ## 🤝 Contributing
 
 1. Fork the repository

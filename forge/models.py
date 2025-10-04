@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Literal, Optional, Self, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -192,7 +192,7 @@ class CharacterCardV3(BaseModel):
     data: CharacterCardV3Data = Field(..., description="Character data object")
 
     @model_validator(mode="after")
-    def validate_spec(self) -> Self:
+    def validate_spec(self):
         """Validate that spec field is correct."""
         if self.spec != "chara_card_v3":
             raise ValueError("spec field must be 'chara_card_v3'")
