@@ -43,13 +43,13 @@ DEFAULT_CONFIG = {
             "alternate_greetings": {
                 "enabled": True,
                 "type": "array",
-                "file_pattern": "{index}.txt",
+                "file_pattern": "{idx}.md",
                 "value_type": "string",
             },
             "group_only_greetings": {
                 "enabled": True,
                 "type": "array",
-                "file_pattern": "{index}.txt",
+                "file_pattern": "{idx}.md",
                 "value_type": "string",
             },
             "tags": {"enabled": False, "type": "array", "value_type": "string"},
@@ -73,13 +73,13 @@ DEFAULT_CONFIG = {
                     "TavernHelper_scripts": {
                         "enabled": True,
                         "type": "array",
-                        "file_pattern": "{value.name}.yaml",
+                        "file_pattern": "{idx}: {value.name}.yaml",
                         "value_type": "dict",
                     },
                     "regex_scripts": {
                         "enabled": True,
                         "type": "array",
-                        "file_pattern": "{scriptName}.yaml",
+                        "file_pattern": "{idx}: {scriptName}.yaml",
                         "value_type": "dict",
                     },
                 },
@@ -91,7 +91,7 @@ DEFAULT_CONFIG = {
                     "entries": {
                         "enabled": True,
                         "type": "array",
-                        "file_pattern": "{id}-{comment}.yaml",
+                        "file_pattern": "{id}: {comment}.yaml",
                         "value_type": "dict",
                     },
                 },
