@@ -19,6 +19,8 @@
 ╚═══════════════════════════════════════════════════════════════════════════════╝
 ```
 
+> ⚠️ **Compatibility Notice**: This project is designed primarily for **Character Card V3 Specification (CCV3)** under [https://github.com/kwaroran/character-card-spec-v3](https://github.com/kwaroran/character-card-spec-v3). Legacy versions are technically supported but not guaranteed to work correctly with all features.
+
 ## 🚀 Features
 
 - **📤 Extract**: Get character data from PNG files to JSON
@@ -297,7 +299,6 @@ Card Forge supports powerful template variables for dynamic file naming:
 
 **Basic Variables:**
 - `{idx}` - Array index (auto-padded with zeros)
-- `{key}` - Dictionary key name
 
 **Dot Notation (for complex data):**
 - `{value.name}` - Access nested properties
