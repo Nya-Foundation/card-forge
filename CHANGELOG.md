@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.1.1 (2025-10-04)
+
+### Bug Fixes
+
+- Support for python 3.10-3.12, update README with config guide
+  ([`e50273a`](https://github.com/Nya-Foundation/card-forge/commit/e50273a5f3ab53f225964456a3aa20441e98dc44))
+
+
 ## v0.1.0 (2025-10-04)
 
 ### Chores
