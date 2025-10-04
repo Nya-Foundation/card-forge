@@ -79,6 +79,7 @@ def embed_card_data(
     metadata: str,
     image_path: StrOrBytesPath,
     output_path: StrOrBytesPath,
+    legacy: bool = False,
 ) -> None:
     """
     Embed character card metadata into PNG image file.
@@ -89,6 +90,7 @@ def embed_card_data(
         metadata: JSON string containing character card data
         image_path: Path to the source PNG image
         output_path: Path where the image with embedded data should be saved
+        legacy: If True, add legacy support for v1, v2 cards via 'chara' text chunk
 
     Raises:
         FileNotFoundError: If source image doesn't exist
@@ -107,6 +109,10 @@ def embed_card_data(
 
         # Add data to PNG text chunks under the key 'ccv3'
         png_info.add_text("ccv3", encoded_data)
+
+        # Optionally add legacy support under 'chara' key
+        if legacy:
+            png_info.add_text("chara", encoded_data)
 
         # Save the image with text chunk data
         image.save(output_path, pnginfo=png_info)
@@ -138,8 +144,15 @@ def extract_card_data(
     try:
         image = Image.open(image_path)
         # Get text chunks from PNG
-        if hasattr(image, "text") and "ccv3" in image.text:
-            embedded_data = image.text["ccv3"]
+        if hasattr(image, "text"):
+            if "ccv3" in image.text:
+                embedded_data = image.text["ccv3"]
+            elif "chara" in image.text:
+                embedded_data = image.text["chara"]
+            else:
+                print("No embedded text found in image text chunks")
+                return None
+
             decoded_text = base64.b64decode(embedded_data).decode("utf-8")
             card = CharacterCardV3.model_validate_json(decoded_text)
             return card
@@ -184,29 +197,25 @@ def safe_file_write(content: str, path: str):
         f.write(content)
 
 
-def _extract_filename_from_pattern(pattern: str, item: Any, index: int) -> str:
+def _extract_filename_from_pattern(pattern: str, item: Any) -> str:
     """
     Extract filename from pattern using item fields with dot notation support.
 
     Args:
         pattern: File pattern with placeholders (supports dot notation like {value.name})
         item: Item to extract values from
-        index: Index fallback for unknown patterns
 
     Returns:
         Generated filename
     """
-    if isinstance(item, dict):
-        try:
-            # Use a custom formatter that handles dot notation
-            return _format_with_dot_notation(pattern, item)
-        except Exception as e:
-            print(
-                f"Warning: Could not extract filename from pattern '{pattern}' with item {item}. Error: {e}"
-            )
-            raise e
-    else:
-        return f"{index + 1}.md"
+    try:
+        # Use a custom formatter that handles dot notation
+        return _format_with_dot_notation(pattern, item)
+    except Exception as e:
+        print(
+            f"Warning: Could not extract filename from pattern '{pattern}' with item {item}. Error: {e}"
+        )
+        return None
 
 
 def _format_with_dot_notation(pattern: str, data: dict) -> str:
@@ -321,24 +330,31 @@ def dump_array_field(
     # Directory name is always the field name
     full_path = os.path.join(path, field_name)
     value_type = config.get("value_type", "string")
+    zfill_length = min(len(items), 3)
 
     # Handle different array patterns
     if "file_pattern" in config:
-        pattern = config["file_pattern"]
+        pattern: str = config["file_pattern"]
 
         for idx, item in enumerate(items):
-            if "{index}" in pattern:
-                filename = pattern.format(index=idx + 1)
-            else:
-                # Handle complex patterns with field extraction
-                filename = _extract_filename_from_pattern(pattern, item, idx)
+            filename = pattern
+
+            # Handle index pattern with {idx}, with zero-padding
+            if "{idx}" in pattern:
+                filename = pattern.replace("{idx}", str(idx + 1).zfill(zfill_length))
+
+            # Handle complex patterns, dot notation from item fields
+            if isinstance(item, dict):
+                filename = (
+                    _extract_filename_from_pattern(filename, item) or f"{idx + 1}.md"
+                )
 
             file_path = os.path.join(full_path, filename)
             write_value(item, file_path, value_type)
     else:
         # Default pattern for arrays without explicit pattern
         for idx, item in enumerate(items):
-            filename = f"{idx + 1}.txt"
+            filename = f"{idx + 1}.md"
             file_path = os.path.join(full_path, filename)
             write_value(item, file_path, value_type)
 
@@ -573,29 +589,12 @@ def load_array_field(config: Dict[str, Any], path: str, field_name: str) -> list
     items = []
     value_type = config.get("value_type", "string")
 
-    if "file_pattern" in config:
-        pattern = config["file_pattern"]
-
-        if "{index}" in pattern:
-            # Load numbered files
-            index = 1
-            while True:
-                filename = pattern.format(index=index)
-                file_path = os.path.join(full_path, filename)
-                if os.path.exists(file_path):
-                    item = read_value(file_path, value_type)
-                    if item or value_type == "string":  # Include empty strings
-                        items.append(item)
-                    index += 1
-                else:
-                    break
-        else:
-            # Load all matching files for complex patterns
-            for filename in sorted(os.listdir(full_path)):
-                file_path = os.path.join(full_path, filename)
-                item = read_value(file_path, value_type)
-                if item or value_type == "string":  # Include empty strings
-                    items.append(item)
+    # Load all matching files keeping the original order
+    for filename in sorted(os.listdir(full_path)):
+        file_path = os.path.join(full_path, filename)
+        item = read_value(file_path, value_type)
+        if item or value_type == "string":  # Include empty strings
+            items.append(item)
 
     return items
 

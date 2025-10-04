@@ -3,10 +3,10 @@
 Card Forge CLI - Modern tool for AI character card management
 """
 
+import argparse
+import json
 import os
 import sys
-import json
-import argparse
 from pathlib import Path
 
 import yaml
@@ -140,7 +140,7 @@ def repo_command(args):
             indent = " " * 2 * level
             print(f"  {indent}📁 {os.path.basename(root)}/")
             subindent = " " * 2 * (level + 1)
-            for file in files:
+            for file in sorted(files):
                 if file.startswith("_"):
                     print(f"  {subindent}⚙️  {file}")
                 else:
@@ -149,7 +149,11 @@ def repo_command(args):
         return 0
 
     except Exception as e:
-        print_error(f"Repositorization failed: {e}")
+        import traceback
+
+        print_error(
+            f"Repositorization failed: {e}, traceback: {traceback.format_exc()}"
+        )
         return 1
 
 
@@ -182,6 +186,7 @@ def build_command(args):
             print_info(f"JSON saved to: {output_file}")
 
         elif args.format == "png":
+            legacy_support = args.legacy
             output_file = f"{output_path}.png"
             base_image = args.base_image if args.base_image else "character.png"
 
@@ -190,7 +195,12 @@ def build_command(args):
                 return 1
 
             card_json = card.model_dump_json(indent=2)
-            embed_card_data(card_json, base_image, output_file)
+            embed_card_data(
+                metadata=card_json,
+                image_path=base_image,
+                output_path=output_file,
+                legacy=legacy_support,
+            )
 
             print_success("Character card rebuilt and embedded in PNG!")
             print_info(f"Character: {card.data.name}")
@@ -417,6 +427,13 @@ Examples:
     )
     build_parser.add_argument(
         "-c", "--config", help="Configuration file (default: config.yaml)"
+    )
+    # legacy support for v1, v2 character cards
+    build_parser.add_argument(
+        "-l",
+        "--legacy",
+        action="store_true",
+        help="Support legacy character cards format, ccv1/ccv2",
     )
     build_parser.set_defaults(func=build_command)
 

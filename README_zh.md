@@ -92,10 +92,10 @@ character_name/
     ├── example_messages.md     # 示例对话
     ├── creator_notes.md        # 创作者备注
     ├── alternate_greetings/    # 替代问候语
-    │   ├── 1.txt
-    │   └── 2.txt
+    │   ├── 001.txt
+    │   └── 002.txt
     ├── group_only_greetings/   # 群聊专用问候语
-    │   └── 1.txt
+    │   └── 001.txt
     ├── creator_notes_multilingual/  # 多语言备注
     │   ├── en.md
     │   └── es.md
@@ -105,14 +105,14 @@ character_name/
     ├── extensions/             # 扩展和脚本
     │   ├── _metadata.yaml
     │   ├── TavernHelper_scripts/
-    │   │   └── script_name.yaml
+    │   │   └── 001_script_name.yaml
     │   └── regex_scripts/
-    │       └── script_name.yaml
+    │       └── 001_script_name.yaml
     └── character_book/         # 设定集条目
         ├── _metadata.yaml
         └── entries/
-            ├── 1-location.yaml
-            └── 2-character.yaml
+            ├── 001_location.yaml
+            └── 002_character.yaml
 ```
 
 ### `build` - 从仓库重建

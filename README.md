@@ -94,10 +94,10 @@ character_name/
     ├── example_messages.md     # Example dialogue
     ├── creator_notes.md        # Creator notes
     ├── alternate_greetings/    # Alternative greetings
-    │   ├── 1.txt
-    │   └── 2.txt
+    │   ├── 001.md
+    │   └── 0012.md
     ├── group_only_greetings/   # Group chat greetings
-    │   └── 1.txt
+    │   └── 0011.md
     ├── creator_notes_multilingual/  # Multi-language notes
     │   ├── en.md
     │   └── es.md
@@ -107,14 +107,14 @@ character_name/
     ├── extensions/             # Extensions and scripts
     │   ├── _metadata.yaml
     │   ├── TavernHelper_scripts/
-    │   │   └── script_name.yaml
+    │   │   └── 001_script_name.yaml
     │   └── regex_scripts/
-    │       └── script_name.yaml
+    │       └── 001_script_name.yaml
     └── character_book/         # Lorebook entries
         ├── _metadata.yaml
         └── entries/
-            ├── 1-location.yaml
-            └── 2-character.yaml
+            ├── 001_location.yaml
+            └── 002_character.yaml
 ```
 
 ### `build` - Rebuild from repository
