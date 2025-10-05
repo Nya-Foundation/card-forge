@@ -21,20 +21,21 @@
 
 > ⚠️ **Compatibility Notice**: This project is designed primarily for **Character Card V3 Specification (CCV3)** under [https://github.com/kwaroran/character-card-spec-v3](https://github.com/kwaroran/character-card-spec-v3). Legacy versions are technically supported but not guaranteed to work correctly with all features.
 
-## 🚀 Features
+## 🚀 Key Features
 
-- **📤 Extract**: Get character data from PNG files to JSON
+- **📤 Extract**: Get character data from PNG files to JSON with full CCV3 support
 - **📁 Repositorize**: Convert cards to version-control friendly file structures  
-- **🔨 Rebuild**: Reconstruct cards from repositories
-- **✅ Validate**: Check card integrity and specification compliance
-- **📊 Analyze**: Get detailed character card information
-- **🎨 Modern CLI**: Beautiful interface with helpful commands
+- **🔨 Rebuild**: Reconstruct cards from repositories with data integrity validation
+- **✅ Validate**: Check card integrity and specification compliance using Pydantic models
+- **📊 Analyze**: Get detailed character card information and statistics
+- **⚙️ Configurable**: Flexible YAML-based configuration for custom workflows
+- **🎨 Modern CLI**: Beautiful interface with helpful commands and clear feedback
 
 ## 🔧 Installation
 
 ```bash
 # Install with uv (recommended)
-uv add card-forge
+uv add --dev card-forge
 
 # Or with pip
 pip install card-forge
@@ -57,32 +58,53 @@ card-forge validate character.png
 
 # Get detailed information about a character
 card-forge info character.png
-
-# Generate default configuration file
-card-forge init-config
-
-# Show version information
-card-forge --version
 ```
 
-## 📋 Commands
+## 🏗️ Architecture & Data Models
 
-### `extract` - Extract card data to JSON
+Card Forge is built on robust **Pydantic v2** models that ensure data integrity and type safety throughout the entire workflow. Our models provide:
 
+- **Full CCV3 Compliance**: Complete implementation of Character Card V3 specification
+- **Type Safety**: All character data is validated using strongly-typed Pydantic models
+- **Data Integrity**: Automatic validation during extraction, repositorization, and rebuilding
+- **Extensibility**: Support for custom extensions and application-specific fields
+
+### Core Models
+
+```python
+from forge.models import CharacterCardV3, CharacterCardV3Data, Lorebook, LorebookEntry, Asset
+
+# All character cards are represented as validated Pydantic models
+card: CharacterCardV3 = extract_card_data("character.png")
+
+# Access typed data with full IDE support and validation
+character_name: str = card.data.name
+lorebook: Optional[Lorebook] = card.data.character_book
+assets: Optional[List[Asset]] = card.data.assets
+```
+
+**Model Features:**
+- **Automatic Validation**: Invalid data is caught early with clear error messages
+- **Type Hints**: Full IDE support with autocompletion and type checking
+- **Flexible Fields**: Support for optional fields, defaults, and custom extensions
+- **JSON Serialization**: Seamless conversion between Python objects and JSON
+
+## 📋 Command Reference
+
+### Extract Command
 ```bash
 card-forge extract card.png                     # Extract to character_name.json
 card-forge extract card.png -o mychar.json      # Custom output filename
 ```
 
-### `repo` - Convert to repository structure
-
+### Repository Command
 ```bash
 card-forge repo card.png                        # From PNG file
 card-forge repo character.json                  # From JSON file
 card-forge repo card.png -c custom_config.yaml  # Custom configuration
 ```
 
-Creates a clean, organized directory structure:
+**Repository Structure:**
 ```
 character_name/
 ├── _metadata.yaml              # Card metadata (spec, version)
@@ -97,9 +119,9 @@ character_name/
     ├── creator_notes.md        # Creator notes
     ├── alternate_greetings/    # Alternative greetings
     │   ├── 001.md
-    │   └── 0012.md
+    │   └── 002.md
     ├── group_only_greetings/   # Group chat greetings
-    │   └── 0011.md
+    │   └── 001.md
     ├── creator_notes_multilingual/  # Multi-language notes
     │   ├── en.md
     │   └── es.md
@@ -119,8 +141,7 @@ character_name/
             └── 002_character.yaml
 ```
 
-### `build` - Rebuild from repository
-
+### Build Command
 ```bash
 card-forge build my_character/                  # Rebuild to JSON
 card-forge build my_character/ -f png           # Rebuild to PNG
@@ -128,159 +149,97 @@ card-forge build my_character/ -o rebuilt       # Custom output name
 card-forge build my_character/ -f png -b base.png  # Custom base image
 ```
 
-### `validate` - Check card integrity
-
+### Validation & Analysis
 ```bash
 card-forge validate character.png               # Validate PNG
 card-forge validate character.json              # Validate JSON
-```
-
-### `info` - Detailed character analysis
-
-```bash
 card-forge info character.png                   # Show detailed information
 ```
 
-### `init-config` - Generate configuration file
-
+### Configuration
 ```bash
 card-forge init-config                          # Generate config.yaml
 card-forge init-config -o custom.yaml           # Custom filename
 ```
 
-Example output:
-```
-🎭 CHARACTER: Alice Wonderland
-================================================================================
-👤 Creator: CardMaker
-🏷️  Tags: fantasy, adventure, curious
-📝 Version: 1.0
-🔧 Spec: chara_card_v3 v3.0
-
-📋 CONTENT OVERVIEW:
-  • Description: 1,250 characters
-  • Personality: 890 characters
-  • Scenario: 1,100 characters
-  • Alternate greetings: 3
-  • Group-only greetings: 1
-
-📚 LOREBOOK:
-  • Name: Wonderland Guide
-  • Entries: 12
-```
-
 ## 🛠️ Development Workflow
 
-### 1. Extract and Explore
+**1. Extract and Explore**
 ```bash
-# Extract a character card to see its structure
 card-forge extract my_card.png
 card-forge info my_card.png
 ```
 
-### 2. Convert to Repository
+**2. Convert to Repository**
 ```bash
-# Create editable file structure
 card-forge repo my_card.png
 ```
 
-### 3. Edit Files
-Edit the individual files in your favorite editor:
-- Modify `description.md` for character description
-- Update `personality.md` for personality traits
-- Add alternate greetings in `alternate_greetings/`
-- Edit lorebook entries in `character_book/entries/`
+**3. Edit Files** - Edit individual files in your favorite editor
 
-### 4. Rebuild and Test
+**4. Rebuild and Test**
 ```bash
-# Rebuild to verify changes
 card-forge build my_character/
 card-forge validate my_character_rebuilt.json
-
-# Create final PNG
 card-forge build my_character/ -f png
 ```
 
-## 🔄 Use Cases
+## 🔄 Common Use Cases
 
 ### Version Control for Character Development
 ```bash
-# Initial setup
 card-forge repo character.png
-git init character_name
-cd character_name
-git add .
-git commit -m "Initial character import"
-
+git init character_name && cd character_name
+git add . && git commit -m "Initial character import"
 # Make changes to files...
 git commit -am "Updated personality traits"
-
-# Rebuild for distribution
 card-forge build . -f png
 ```
 
 ### Collaborative Character Creation
 ```bash
-# Split work among team members
 card-forge repo base_character.png
-
-# Person A works on personality.md
-# Person B works on lorebook entries
-# Person C works on greetings
-
-# Merge changes and rebuild
+# Team members work on different files
+# Person A: personality.md, Person B: lorebook entries, Person C: greetings
 card-forge build character/ -f png
 ```
 
 ### Character Analysis and Debugging
 ```bash
-# Quick analysis
 card-forge info problematic_card.png
-
-# Deep validation
 card-forge validate character.png
-card-forge extract character.png
-card-forge repo character.json
-card-forge build character/
 ```
-
-## 🎮 Compatibility
-
-- ✅ **SillyTavern**: Full compatibility
-- ✅ **RisuAI**: Full compatibility  
-- ✅ **Character Card V3**: Complete specification support
-- ✅ **Legacy formats**: Backward compatible
 
 ## 📦 API Usage
 
-For programmatic use:
+**Programmatic Access with Pydantic Models:**
 
 ```python
 from forge.helper import extract_card_data, repositorize, rebuild_card
+from forge.models import CharacterCardV3
 
-# Extract character card from PNG
-card = extract_card_data("character.png")
+# Extract character card with full type safety
+card: CharacterCardV3 = extract_card_data("character.png")
+
+# Access validated data
+print(f"Character: {card.data.name}")
+print(f"Creator: {card.data.creator}")
+print(f"Lorebook entries: {len(card.data.character_book.entries) if card.data.character_book else 0}")
 
 # Convert to repository structure  
-repo_path = repositorize(card)
+repo_path: str = repositorize(card)
 
 # Edit files in the repository...
 
-# Rebuild the card
-rebuilt_card = rebuild_card(repo_path)
+# Rebuild with validation
+rebuilt_card: CharacterCardV3 = rebuild_card(repo_path)
 ```
 
-## ⚙️ Configuration
+## ⚙️ Configuration System
 
-The tool uses `config.yaml` for customization. The default configuration works great for most use cases, but you can customize field handling, file patterns, and repository structure as needed.
+Card Forge uses a flexible YAML-based configuration system for customizing how character data is organized into files and directories.
 
-### 🛠️ Customizing Repositorization Behavior
-
-Card Forge uses a flexible configuration system that lets you control exactly how character data gets organized into files and directories. Here's how to customize it:
-
-#### Field Types and Options
-
-Each field in your character card can be configured with different types and behaviors:
+### Field Types and Options
 
 ```yaml
 repositorize:
@@ -293,148 +252,47 @@ repositorize:
       value_type: string|dict      # Type of values in arrays/dicts
 ```
 
-#### Template Variables
+### Template Variables
 
-Card Forge supports powerful template variables for dynamic file naming:
-
-**Basic Variables:**
 - `{idx}` - Array index (auto-padded with zeros)
-
-**Dot Notation (for complex data):**
-- `{value.name}` - Access nested properties
+- `{value.name}` - Access nested properties with dot notation
 - `{value.id}_{value.title}` - Combine multiple properties
 
-#### Configuration Examples
+### Configuration Examples
 
-**1. Custom Array Patterns**
+**Custom Array Patterns:**
 ```yaml
-# Default: alternate_greetings/001.md, 002.md, 003.md
 alternate_greetings:
   enabled: true
   type: array
   file_pattern: "greeting_{idx}.md"
   value_type: string
-
-# Result: alternate_greetings/greeting_001.md, greeting_002.md
 ```
 
-**2. Complex Object Arrays**
+**Complex Object Arrays:**
 ```yaml
-# For arrays of objects like assets or scripts
 assets:
   enabled: true
   type: array
-  file_pattern: "{name}_{type}.yaml"  # Uses object properties
+  file_pattern: "{name}_{type}.yaml"
   value_type: dict
-
-# Result: assets/portrait_icon.yaml, background_image.yaml
 ```
 
-**3. Multilingual Content**
+**Multilingual Content:**
 ```yaml
-# Dictionary with language codes as keys
 creator_notes_multilingual:
   enabled: true
   type: dict
-  file_pattern: "notes_{key}.md"  # key = language code
-  value_type: string
-
-# Result: creator_notes_multilingual/notes_en.md, notes_es.md
-```
-
-**4. Nested Field Configuration**
-```yaml
-extensions:
-  enabled: true
-  type: nested
-  fields:
-    regex_scripts:
-      enabled: true
-      type: array
-      file_pattern: "{idx}_{scriptName}.yaml"  # Uses script's name property
-      value_type: dict
-```
-
-**5. Disabling Fields**
-```yaml
-# Keep some fields in metadata instead of separate files
-tags:
-  enabled: false  # Will remain in _metadata.yaml
-  type: array
-  value_type: string
-
-source:
-  enabled: false  # Keep URLs in metadata for easier management
-  type: array
+  file_pattern: "notes_{key}.md"
   value_type: string
 ```
 
-#### Custom Configuration Workflow
+## 🎮 Compatibility
 
-1. **Generate default config:**
-   ```bash
-   card-forge init-config -o my_config.yaml
-   ```
-
-2. **Customize field handling:**
-   ```yaml
-   # Example: Change how greetings are organized
-   alternate_greetings:
-     enabled: true
-     type: array
-     file_pattern: "alt_greeting_{idx}.txt"
-     value_type: string
-   ```
-
-3. **Use custom config:**
-   ```bash
-   card-forge repo character.png -c my_config.yaml
-   card-forge build character/ -c my_config.yaml
-   ```
-
-#### Advanced Examples
-
-**Organize scripts by functionality:**
-```yaml
-extensions:
-  enabled: true
-  type: nested
-  fields:
-    regex_scripts:
-      enabled: true
-      type: array
-      file_pattern: "{idx}_{scriptName}_{id}.yaml"
-      value_type: dict
-```
-
-**Lorebook entries with meaningful names:**
-```yaml
-character_book:
-  enabled: true
-  type: nested
-  fields:
-    entries:
-      enabled: true
-      type: array
-      file_pattern: "{id}_{comment}.yaml"  # Uses entry ID and comment
-      value_type: dict
-```
-
-**Custom string field organization:**
-```yaml
-# Group all text content in a 'content' subdirectory
-description:
-  enabled: true
-  type: string
-  filename: "content/character_description.md"
-
-personality:
-  enabled: true
-  type: string
-  filename: "content/personality_traits.md"
-```
-
-The configuration system is designed to be intuitive yet powerful - you can keep the defaults for quick workflows, or customize everything for complex projects with specific organization needs.
+- ✅ **SillyTavern**: Full compatibility
+- ✅ **RisuAI**: Full compatibility  
+- ✅ **Character Card V3**: Complete specification support
+- ✅ **Legacy formats**: Backward compatible
 
 ## 🤝 Contributing
 
