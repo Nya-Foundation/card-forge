@@ -177,7 +177,7 @@ class LiteralDumper(yaml.SafeDumper):
 
 
 def str_presenter(dumper, data: str):
-    data = re.sub(r"\s+\n", "\n", data)  # Normalize newlines
+    data = re.sub(r"[^\n][ \t\r]+\n", "\n", data)  # Normalize newlines
     # Use block style for multiline strings or long strings
     if "\n" in data or len(data) > 256:
         return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="|")
