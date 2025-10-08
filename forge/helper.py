@@ -1,6 +1,6 @@
-import base64
 import os
 import re
+import base64
 from typing import Any, Dict, Optional, Union
 
 import yaml
@@ -165,11 +165,20 @@ def extract_card_data(
         return None
 
 
+def ensure_dir(path: str):
+    dirname = os.path.dirname(path)
+    if not dirname:
+        return
+    os.makedirs(dirname, exist_ok=True)
+
+
 class LiteralDumper(yaml.SafeDumper):
     pass
 
 
 def str_presenter(dumper, data: str):
+    data = re.sub(r"\s+\n", "\n", data)  # Normalize newlines
+    # Use block style for multiline strings or long strings
     if "\n" in data or len(data) > 256:
         return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="|")
     return dumper.represent_scalar("tag:yaml.org,2002:str", data)
@@ -179,11 +188,12 @@ LiteralDumper.add_representer(str, str_presenter)
 
 
 def yaml_safe_dump(data, path):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
+    ensure_dir(path)
     with open(path, "w") as f:
         yaml.dump(
             data,
             f,
+            indent=2,
             Dumper=LiteralDumper,
             sort_keys=False,
             allow_unicode=True,
@@ -192,7 +202,7 @@ def yaml_safe_dump(data, path):
 
 
 def safe_file_write(content: str, path: str):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
+    ensure_dir(path)
     with open(path, "w", encoding="utf-8") as f:
         f.write(content)
 

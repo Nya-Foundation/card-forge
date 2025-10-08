@@ -121,5 +121,5 @@ repositorize:
         entries:
           enabled: true
           type: array
-          file_pattern: "{id}_{comment}.yaml"
+          file_pattern: "{insertion_order}_{comment}.yaml"
           value_type: dict

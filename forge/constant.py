@@ -91,7 +91,7 @@ DEFAULT_CONFIG = {
                     "entries": {
                         "enabled": True,
                         "type": "array",
-                        "file_pattern": "{id}_{comment}.yaml",
+                        "file_pattern": "{insertion_order}_{comment}.yaml",
                         "value_type": "dict",
                     },
                 },
