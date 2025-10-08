@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.2.1 (2025-10-08)
+
+### Bug Fixes
+
+- Update regex rule for yaml dump
+  ([`e703e1d`](https://github.com/Nya-Foundation/card-forge/commit/e703e1d7e04ae2ab8eb545f7e782cc6b35cb76d9))
+
+
 ## v0.2.0 (2025-10-08)
 
 ### Chores
