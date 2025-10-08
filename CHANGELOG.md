@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.2.2 (2025-10-08)
+
+### Bug Fixes
+
+- Fix the piror fix
+  ([`d55423e`](https://github.com/Nya-Foundation/card-forge/commit/d55423ea6b29db1689814a7eed805c1835918762))
+
+
 ## v0.2.1 (2025-10-08)
 
 ### Bug Fixes
