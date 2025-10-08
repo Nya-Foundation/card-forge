@@ -1,6 +1,25 @@
 # CHANGELOG
 
 
+## v0.2.0 (2025-10-08)
+
+### Chores
+
+- Update README
+  ([`2b9b98f`](https://github.com/Nya-Foundation/card-forge/commit/2b9b98f8db66910ef5c6721c04075eeaa624d8ee))
+
+- Update README
+  ([`7d564b5`](https://github.com/Nya-Foundation/card-forge/commit/7d564b5e54c7dc7c1fd439d6a9e9e6cf31bd6fca))
+
+- **format**: Apply automatic formatting [skip ci]
+  ([`134babf`](https://github.com/Nya-Foundation/card-forge/commit/134babf0d5e034dd9e77784c1a5db0e0acc26f07))
+
+### Features
+
+- Update default naming logic for character_book repo, refine yaml dump formating,
+  ([`00f86ad`](https://github.com/Nya-Foundation/card-forge/commit/00f86ade17ae7903795c28b9a1c0ba645e36319a))
+
+
 ## v0.1.1 (2025-10-04)
 
 ### Bug Fixes
