@@ -115,8 +115,8 @@ class Lorebook(BaseModel):
     )
 
 
-class CharacterCardV3Data(BaseModel):
-    """Data object containing all character information for Character Card V3."""
+class CharacterCardV2Data(BaseModel):
+    """Data object containing all character information for Character Card V2."""
 
     # Fields from Character Card V2
     name: str = Field(..., description="Character name")
@@ -138,6 +138,10 @@ class CharacterCardV3Data(BaseModel):
     )
     personality: str = Field(..., description="Character personality description")
     scenario: str = Field(..., description="Character scenario description")
+
+
+class CharacterCardV3Data(CharacterCardV2Data):
+    """Data object containing all character information for Character Card V3."""
 
     # Changed fields from Character Card V2
     creator_notes: str = Field(
@@ -176,6 +180,20 @@ class CharacterCardV3Data(BaseModel):
         default=None,
         description="Last modification date as Unix timestamp in seconds (UTC)",
     )
+
+
+class CharacterCardV2(BaseModel):
+    """Character Card V3 specification model."""
+
+    spec: Literal["chara_card_v2"] = Field(
+        default="chara_card_v2",
+        description="Specification identifier, must be 'chara_card_v2'",
+    )
+    spec_version: str = Field(
+        default="2.0",
+        description="Specification version, must be '2.0' for this version",
+    )
+    data: CharacterCardV2Data = Field(..., description="Character data object")
 
 
 class CharacterCardV3(BaseModel):

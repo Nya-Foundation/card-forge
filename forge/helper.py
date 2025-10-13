@@ -3,12 +3,13 @@ import os
 import re
 from typing import Any, Dict, Optional, Union
 
+from pydantic import ValidationError
 import yaml
 from PIL import Image
 from PIL.PngImagePlugin import PngInfo
 
 from forge.constant import DEFAULT_CONFIG
-from forge.models import CharacterCardV3
+from forge.models import CharacterCardV2, CharacterCardV3, CharacterCardV3Data
 
 StrOrBytesPath = Union[str, bytes, os.PathLike[str], os.PathLike[bytes]]
 
@@ -154,7 +155,13 @@ def extract_card_data(
                 return None
 
             decoded_text = base64.b64decode(embedded_data).decode("utf-8")
-            card = CharacterCardV3.model_validate_json(decoded_text)
+            try:
+                card = CharacterCardV3.model_validate_json(decoded_text)
+            except ValidationError as err:
+                print(f"Card is not V3:\n{err}\nAttempting to load as V2 and upgrade.")
+                card_v2 = CharacterCardV2.model_validate_json(decoded_text)
+                card = upgrade_v2_to_v3(card_v2)
+
             return card
         else:
             print("No embedded text found in image text chunks")
@@ -791,3 +798,9 @@ def rebuild_card(base_path: str, config_path: str = "config.yaml") -> CharacterC
         return CharacterCardV3.model_validate(metadata)
     except Exception as e:
         raise ValueError(f"Card validation failed: {e}") from e
+
+
+def upgrade_v2_to_v3(card: CharacterCardV2) -> CharacterCardV3:
+    """Convert the V2 to V3."""
+    card_data = CharacterCardV3Data.model_validate_json(card.data.model_dump_json())
+    return CharacterCardV3(data=card_data)
