@@ -139,10 +139,6 @@ class CharacterCardV2Data(BaseModel):
     personality: str = Field(..., description="Character personality description")
     scenario: str = Field(..., description="Character scenario description")
 
-
-class CharacterCardV3Data(CharacterCardV2Data):
-    """Data object containing all character information for Character Card V3."""
-
     # Changed fields from Character Card V2
     creator_notes: str = Field(
         default="",
@@ -151,6 +147,10 @@ class CharacterCardV3Data(CharacterCardV2Data):
     character_book: Optional[Lorebook] = Field(
         default=None, description="Character-specific lorebook"
     )
+
+
+class CharacterCardV3Data(CharacterCardV2Data):
+    """Data object containing all character information for Character Card V3."""
 
     # New fields in Character Card V3
     assets: Optional[List[Asset]] = Field(
