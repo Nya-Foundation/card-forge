@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "card-forge"
-version = "0.2.2"
+version = "0.3.0"
 description = "Modern CLI tool for AI character card management - extract, repositorize, and rebuild character cards"
 readme = "README.md"
 authors = [

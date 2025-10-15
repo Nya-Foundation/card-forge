@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v0.3.0 (2025-10-15)
+
+### Bug Fixes
+
+- Missed two fields
+  ([`09b0073`](https://github.com/Nya-Foundation/card-forge/commit/09b007399d970840ecc49a64bc6253d62885d9e1))
+
+### Features
+
+- Allow V2 cards to be converted to V3
+  ([`b2a005f`](https://github.com/Nya-Foundation/card-forge/commit/b2a005f02cdb617a63b6e43c3207415a1c430c94))
+
+
 ## v0.2.2 (2025-10-08)
 
 ### Bug Fixes
