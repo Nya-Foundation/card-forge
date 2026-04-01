@@ -98,12 +98,27 @@ repositorize:
       enabled: true
       type: nested
       fields:
-        # TavernHelper scripts (Optional)
+        # TavernHelper scripts - legacy format (~v4.0)
         TavernHelper_scripts:
           enabled: true
           type: array
           file_pattern: "{idx}_{value.name}.yaml"
           value_type: dict
+
+        # Tavern Helper - new format (v4.0+)
+        tavern_helper:
+          enabled: true
+          type: nested
+          fields:
+            scripts:
+              enabled: true
+              type: array
+              file_pattern: "{idx}_{name}.yaml"
+              value_type: dict
+            variables:
+              enabled: true
+              type: dict
+              filename: variables.yaml
 
         # Regular expression scripts
         regex_scripts:
