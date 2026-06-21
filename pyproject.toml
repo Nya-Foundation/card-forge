@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "card-forge"
-version = "0.3.0"
+version = "0.4.0"
 description = "Modern CLI tool for AI character card management - extract, repositorize, and rebuild character cards"
 readme = "README.md"
 authors = [
@@ -12,7 +12,6 @@ authors = [
 ]
 license = "MIT"
 license-files = ["LICENSE"]
-
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -22,7 +21,6 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-
 requires-python = ">=3.10"
 dependencies = [
     "pillow>=11.3.0",
@@ -34,13 +32,15 @@ dependencies = [
 card-forge = "forge.cli:main"
 
 
-[tool.coverage.run]
-source = ["forge"]
-
-
 [project.urls]
 "Homepage" = "https://github.com/Nya-Foundation/card-forge"
 "Bug Tracker" = "https://github.com/Nya-Foundation/card-forge/issues"
+
+
+
+[tool.coverage.run]
+source = ["forge"]
+
 
 
 [tool.setuptools]
@@ -58,6 +58,7 @@ include = ["forge*"] # Include forge and its subpackages
 [tool.setuptools.exclude-package-data]
 "*" = ["*.pyc", "*.pyo", "__pycache__/*"]
 
+
 [tool.semantic_release]
 tag_format = "v{version}"
 version_toml = ["pyproject.toml:project.version"]
@@ -70,6 +71,7 @@ commit_author = "github-actions[bot] <github-actions[bot]@users.noreply.github.c
 [tool.semantic_release.publish]
 dist_glob_patterns = ["dist/*"]
 upload_to_vcs_release = true
+
 
 [dependency-groups]
 dev = [

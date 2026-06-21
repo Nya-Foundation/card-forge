@@ -1,6 +1,18 @@
 # CHANGELOG
 
 
+## v0.4.0 (2026-06-21)
+
+### Features
+
+- Add support for new tavern_helper extension format
+  ([`05b679f`](https://github.com/Nya-Foundation/card-forge/commit/05b679f4b4ddbc0816d3f5b4411db7f6e5bbc206))
+
+Support both legacy TavernHelper_scripts (flat array) and new tavern_helper (nested object with
+  scripts + variables) formats. Add recursive nested type handling in dump/load and dict single-file
+  export mode for variables.
+
+
 ## v0.3.0 (2025-10-15)
 
 ### Bug Fixes
