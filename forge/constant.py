@@ -76,6 +76,23 @@ DEFAULT_CONFIG = {
                         "file_pattern": "{idx}_{value.name}.yaml",
                         "value_type": "dict",
                     },
+                    "tavern_helper": {
+                        "enabled": True,
+                        "type": "nested",
+                        "fields": {
+                            "scripts": {
+                                "enabled": True,
+                                "type": "array",
+                                "file_pattern": "{idx}_{name}.yaml",
+                                "value_type": "dict",
+                            },
+                            "variables": {
+                                "enabled": True,
+                                "type": "dict",
+                                "filename": "variables.yaml",
+                            },
+                        },
+                    },
                     "regex_scripts": {
                         "enabled": True,
                         "type": "array",

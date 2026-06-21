@@ -451,9 +451,26 @@ def dump_nested_field(
                 sub_field_data, sub_field_config, full_path, sub_field_name
             )
             modified_data[sub_field_name] = os.path.join(full_path, sub_field_name)
-        elif sub_field_type == "dict":
-            dump_dict_field(sub_field_data, sub_field_config, full_path, sub_field_name)
+        elif sub_field_type == "nested":
+            dump_nested_field(
+                sub_field_data, sub_field_config, full_path, sub_field_name
+            )
             modified_data[sub_field_name] = os.path.join(full_path, sub_field_name)
+        elif sub_field_type == "dict":
+            filename = sub_field_config.get("filename")
+            if filename:
+                ensure_dir(os.path.join(full_path, filename))
+                yaml_safe_dump(
+                    sub_field_data, os.path.join(full_path, filename)
+                )
+                modified_data[sub_field_name] = os.path.join(full_path, filename)
+            else:
+                dump_dict_field(
+                    sub_field_data, sub_field_config, full_path, sub_field_name
+                )
+                modified_data[sub_field_name] = os.path.join(
+                    full_path, sub_field_name
+                )
         elif sub_field_type == "string":
             filename = sub_field_config.get("filename", f"{sub_field_name}.md")
             dump_string_field(sub_field_data, full_path, filename)
@@ -709,10 +726,21 @@ def load_nested_field(
                     result[sub_field_name] = load_array_field(
                         sub_field_config, full_path, sub_field_name
                     )
-                elif sub_field_type == "dict":
-                    result[sub_field_name] = load_dict_field(
+                elif sub_field_type == "nested":
+                    result[sub_field_name] = load_nested_field(
                         sub_field_config, full_path, sub_field_name
                     )
+                elif sub_field_type == "dict":
+                    filename = sub_field_config.get("filename")
+                    if filename:
+                        file_path = os.path.join(full_path, filename)
+                        if os.path.exists(file_path):
+                            with open(file_path, "r", encoding="utf-8") as f:
+                                result[sub_field_name] = yaml.safe_load(f) or {}
+                    else:
+                        result[sub_field_name] = load_dict_field(
+                            sub_field_config, full_path, sub_field_name
+                        )
                 elif sub_field_type == "string":
                     filename = sub_field_config.get("filename", f"{sub_field_name}.md")
                     result[sub_field_name] = load_string_field(full_path, filename)
